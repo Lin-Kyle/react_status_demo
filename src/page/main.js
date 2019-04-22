@@ -3,37 +3,38 @@ import { hot } from "react-hot-loader";
 
 function PropsProxyHOC(WrappedComponent) {
   return class NewComponent extends React.Component {
-    constructor(props) {
-      super(props)
-      this.state = {
-        name: 'PropsProxyHOC'
-      }
-    }
-
-    logName() {
-      console.log(this.name)
-    }
-
     render() {
-      const newProps = {
-        name: this.state.name,
-        logName: this.logName
-      }
+      const newProps = {}
+      // 监听到又对应方法才生成props实例
+      typeof this.props.getInstance === "function" && (newProps.ref = this.props.getInstance)
       return <WrappedComponent {...this.props} {...newProps} />
     }
   }
 }
 
+// 被获取ref实例组件
 class Main extends Component {
-  componentDidMount() {
-    this.props.logName()
-  }
-
   render() {
     return (
-      <div>PropsProxyHOC</div>
+      <div>Main</div>
     )
   }
 }
 
-export default PropsProxyHOC(Main);
+const HOCComponent = PropsProxyHOC(Main)
+
+class ParentComponent extends Component {
+  // 提供给高阶组件调用生成实例
+  getInstance(ref) {
+    this.wrappedInstance = ref;
+    console.log(ref)
+  }
+
+  render() {
+    return (
+      <HOCComponent getInstance={this.getInstance.bind(this)} />
+    )
+  }
+}
+
+export default hot(module)(ParentComponent);
