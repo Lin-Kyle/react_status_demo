@@ -1,51 +1,34 @@
 import React, { Component } from "react";
 import { hot } from "react-hot-loader";
 
-function PropsProxyHOC(WrappedComponent) {
-  return class NewComponent extends React.Component {
-    // 返回ref实例
-    getWrappedInstance = () => {
-      if (this.props.withRef) {
-        return this.wrappedInstance;
-      }
-    }
-
-    //设置ref实例
-    setWrappedInstance = (ref) => {
-      this.wrappedInstance = ref;
-    }
-
+function InheritanceInversionHOC(WrappedComponent) {
+  return class NewComponent extends WrappedComponent {
     render() {
-      const newProps = {}
-      // 监听到有对应方法才赋值props实例
-      this.props.withRef && (newProps.ref = this.setWrappedInstance)
-      return <WrappedComponent {...this.props} {...newProps} />
+      console.log(this)
+      return super.render()
     }
   }
 }
 
 // 被获取ref实例组件
 class Main extends Component {
-  render() {
-    return (
-      <div>Main</div>
-    )
+  constructor() {
+    super()
+    this.state = {
+      name: 'WrappedComponent'
+    }
   }
-}
 
-const HOCComponent = PropsProxyHOC(Main)
-
-class ParentComponent extends Component {
-  // 等挂载组件之后才能获取ref
   componentDidMount() {
-    console.log(this.refs.child.getWrappedInstance())
+    console.log('WrappedComponent did mount')
   }
 
   render() {
     return (
-      <HOCComponent ref="child" withRef />
+      <div ref="child">Main</div>
     )
   }
 }
 
-export default hot(module)(ParentComponent);
+
+export default hot(module)(InheritanceInversionHOC(Main));
