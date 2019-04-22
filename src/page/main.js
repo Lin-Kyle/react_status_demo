@@ -1,38 +1,39 @@
 import React, { Component } from "react";
 import { hot } from "react-hot-loader";
 
-
 function PropsProxyHOC(WrappedComponent) {
   return class NewComponent extends React.Component {
+    constructor(props) {
+      super(props)
+      this.state = {
+        name: 'PropsProxyHOC'
+      }
+    }
+
+    logName() {
+      console.log(this.name)
+    }
+
     render() {
-      const newProps = {}
-      typeof this.props.getInstance === "function" && (newProps.ref = this.props.getInstance)
+      const newProps = {
+        name: this.state.name,
+        logName: this.logName
+      }
       return <WrappedComponent {...this.props} {...newProps} />
     }
   }
 }
 
 class Main extends Component {
-  render() {
-    return (
-      <div>Main</div>
-    )
-  }
-}
-
-const HOCComponent = PropsProxyHOC(Main)
-
-class ParentComponent extends Component {
-  getInstance(ref) {
-    this.wrappedInstance = ref;
-    console.log(ref)
+  componentDidMount() {
+    this.props.logName()
   }
 
   render() {
     return (
-      <HOCComponent getInstance={this.getInstance.bind(this)} />
+      <div>PropsProxyHOC</div>
     )
   }
 }
 
-export default hot(module)(ParentComponent);
+export default PropsProxyHOC(Main);
