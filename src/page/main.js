@@ -1,17 +1,38 @@
 import React, { Component } from "react";
 import { hot } from "react-hot-loader";
 
-function InheritanceInversionHOC(WrappedComponent) {
-  return class NewComponent extends WrappedComponent {
-    render() {
-      const wrapperTree = super.render()
-      const newProps = Object.assign({}, wrapperTree.props, {
-        name: 'NewComponent'
-      })
+function PropsProxyHOC(WrappedComponent) {
+  return class NewComponent extends React.Component {
+    constructor(props) {
+      super(props)
+      this.state = { fields: {} }
+    }
 
-      const newTree = React.cloneElement(wrapperTree, newProps, wrapperTree.props.children)
-      console.log(newTree)
-      return newTree
+    getField(fieldName) {
+      const _s = this.state
+      if (!_s.fields[fieldName]) {
+        _s.fields[fieldName] = {
+          value: '',
+          onChange: event => {
+            this.state.fields[fieldName].value = event.target.value
+            // 强行触发render
+            this.forceUpdate()
+            console.log(this.state)
+          }
+        }
+      }
+
+      return {
+        value: _s.fields[fieldName].value,
+        onChange: _s.fields[fieldName].onChange
+      }
+    }
+
+    render() {
+      const newProps = {
+        fields: this.getField.bind(this),
+      }
+      return <WrappedComponent {...this.props} {...newProps} />
     }
   }
 }
@@ -19,11 +40,9 @@ function InheritanceInversionHOC(WrappedComponent) {
 // 被获取ref实例组件
 class Main extends Component {
   render() {
-    return (
-      <div>Main</div>
-    )
+    return <input type="text" {...this.props.fields('name')} />
   }
 }
 
 
-export default hot(module)(InheritanceInversionHOC(Main));
+export default hot(module)(PropsProxyHOC(Main));
