@@ -4,28 +4,23 @@ import { hot } from "react-hot-loader";
 function InheritanceInversionHOC(WrappedComponent) {
   return class NewComponent extends WrappedComponent {
     render() {
-      console.log(this)
-      return super.render()
+      const wrapperTree = super.render()
+      const newProps = Object.assign({}, wrapperTree.props, {
+        name: 'NewComponent'
+      })
+
+      const newTree = React.cloneElement(wrapperTree, newProps, wrapperTree.props.children)
+      console.log(newTree)
+      return newTree
     }
   }
 }
 
 // 被获取ref实例组件
 class Main extends Component {
-  constructor() {
-    super()
-    this.state = {
-      name: 'WrappedComponent'
-    }
-  }
-
-  componentDidMount() {
-    console.log('WrappedComponent did mount')
-  }
-
   render() {
     return (
-      <div ref="child">Main</div>
+      <div>Main</div>
     )
   }
 }
