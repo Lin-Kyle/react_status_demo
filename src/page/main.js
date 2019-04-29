@@ -1,48 +1,51 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import { hot } from "react-hot-loader";
 
-function PropsProxyHOC(WrappedComponent) {
-  return class NewComponent extends React.Component {
-    constructor(props) {
-      super(props)
-      this.state = { fields: {} }
-    }
 
-    getField(fieldName) {
-      const _s = this.state
-      if (!_s.fields[fieldName]) {
-        _s.fields[fieldName] = {
-          value: '',
-          onChange: event => {
-            this.state.fields[fieldName].value = event.target.value
-            // 强行触发render
-            this.forceUpdate()
-            console.log(this.state)
-          }
-        }
-      }
-
-      return {
-        value: _s.fields[fieldName].value,
-        onChange: _s.fields[fieldName].onChange
-      }
-    }
-
-    render() {
-      const newProps = {
-        fields: this.getField.bind(this),
-      }
-      return <WrappedComponent {...this.props} {...newProps} />
-    }
+/* class Example extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      count: 0
+    };
   }
-}
 
-// 被获取ref实例组件
-class Main extends Component {
+  componentDidMount() {
+    document.title = `You clicked ${this.state.count} times`;
+  }
+
+  componentDidUpdate() {
+    document.title = `You clicked ${this.state.count} times`;
+  }
+
   render() {
-    return <input type="text" {...this.props.fields('name')} />
+    return (
+      <div>
+        <p>You clicked {this.state.count} times</p>
+        <button onClick={() => this.setState({ count: this.state.count + 1 })}>
+          Click me
+        </button>
+      </div>
+    );
   }
+} */
+
+function Example() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    document.title = `You clicked ${count} times`;
+  });
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>
+        Click me
+      </button>
+    </div>
+  );
 }
 
 
-export default hot(module)(PropsProxyHOC(Main));
+export default hot(module)(Example);
