@@ -3,22 +3,10 @@ import { hot } from "react-hot-loader";
 
 function PropsProxyHOC(WrappedComponent) {
   return class NewComponent extends React.Component {
-    // 返回ref实例
-    getWrappedInstance = () => {
-      if (this.props.withRef) {
-        return this.wrappedInstance;
-      }
-    }
-
-    //设置ref实例
-    setWrappedInstance = (ref) => {
-      this.wrappedInstance = ref;
-    }
-
     render() {
       const newProps = {}
-      // 监听到有对应方法才赋值props实例
-      this.props.withRef && (newProps.ref = this.setWrappedInstance)
+      // 监听到有对应方法才生成props实例
+      typeof this.props.getInstance === "function" && (newProps.ref = this.props.getInstance)
       return <WrappedComponent {...this.props} {...newProps} />
     }
   }
@@ -36,14 +24,22 @@ class Main extends Component {
 const HOCComponent = PropsProxyHOC(Main)
 
 class ParentComponent extends Component {
-  // 等挂载组件之后才能获取ref
+  componentWillMount() {
+    console.log('componentWillMount: ', this.wrappedInstance)
+  }
+
   componentDidMount() {
-    console.log(this.refs.child.getWrappedInstance())
+    console.log('componentDidMount: ', this.wrappedInstance)
+  }
+
+  // 提供给高阶组件调用生成实例
+  getInstance(ref) {
+    this.wrappedInstance = ref;
   }
 
   render() {
     return (
-      <HOCComponent ref="child" withRef />
+      <HOCComponent getInstance={this.getInstance.bind(this)} />
     )
   }
 }
