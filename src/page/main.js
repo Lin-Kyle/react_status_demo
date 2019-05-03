@@ -3,8 +3,23 @@ import { hot } from "react-hot-loader";
 
 function PropsProxyHOC(WrappedComponent) {
   return class NewComponent extends React.Component {
+    // 返回ref实例
+    getWrappedInstance = () => {
+      if (this.props.withRef) {
+        return this.wrappedInstance;
+      }
+    }
+
+    //设置ref实例
+    setWrappedInstance = (ref) => {
+      this.wrappedInstance = ref;
+    }
+
     render() {
-      return this.props.isLoading ? <div>Loading...</div> : <WrappedComponent {...this.props} />
+      const newProps = {}
+      // 监听到有对应方法才赋值props实例
+      this.props.withRef && (newProps.ref = this.setWrappedInstance)
+      return <WrappedComponent {...this.props} {...newProps} />
     }
   }
 }
@@ -21,19 +36,21 @@ class Main extends Component {
 const HOCComponent = PropsProxyHOC(Main)
 
 class ParentComponent extends Component {
-  constructor() {
-    super()
-    this.state = {
-      isLoading: true
-    }
+  
+  componentWillMount() {
+    console.log('componentWillMount: ', this.refs.child)
+  }
+  
+  componentDidMount() {
+    console.log('componentDidMount: ', this.refs.child.getWrappedInstance())
   }
 
   render() {
-    setTimeout(() => this.setState({ isLoading: false }), 2000)
     return (
-      <HOCComponent isLoading={this.state.isLoading} />
+      <HOCComponent ref="child" withRef />
     )
   }
 }
+
 
 export default hot(module)(ParentComponent);
