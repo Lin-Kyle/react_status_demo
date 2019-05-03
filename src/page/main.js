@@ -36,4 +36,4 @@ class Main extends Component {
   }
 }
 
-export default PropsProxyHOC(Main);
+export default hot(module)(PropsProxyHOC(Main));
