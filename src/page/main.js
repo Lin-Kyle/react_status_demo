@@ -4,45 +4,48 @@ import { hot } from "react-hot-loader";
 /* class Example extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      count: 0
-    };
   }
 
   componentDidMount() {
-    console.log(`componentDidMount: You clicked ${this.state.count} times`)
+    document.addEventListener('click', this.clickFunc, false)
   }
 
-  componentDidUpdate() {
-    console.log(`componentDidUpdate: You clicked ${this.state.count} times`)
+  componentWillUnmount() {
+    document.removeEventListener('click', this.clickFunc)
+  }
+
+  clickFunc(e) {
+    //  doSomethings
+    console.log(e)
   }
 
   render() {
     return (
-      <div>
-        <p>You clicked {this.state.count} times</p>
-        <button onClick={() => this.setState({ count: this.state.count + 1 })}>
-          Click me
-        </button>
-      </div>
+      <button>
+        click me!
+      </button>
     );
   }
 } */
 
 function Example() {
-  const [count, setCount] = useState(0);
 
   useEffect(() => {
-    console.log(`useEffect: You clicked ${count} times`)
+    document.addEventListener('click', clickFunc, false)
+    return () => {
+      document.removeEventListener('click', clickFunc)
+    }
   });
 
+  function clickFunc(e) {
+    //  doSomethings
+    console.log(e)
+  }
+
   return (
-    <div>
-      <p>You clicked {count} times</p>
-      <button onClick={() => setCount(count + 1)}>
-        Click me
+    <button>
+      click me!
       </button>
-    </div>
   );
 }
 
