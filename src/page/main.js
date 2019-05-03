@@ -5,23 +5,28 @@ function Example() {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    console.log('addEventListener')
+    console.log(`You clicked ${count} times`)
+  });
+
+  useEffect(() => {
     document.addEventListener('click', clickFunc, false)
     return () => {
-      console.log('removeEventListener')
       document.removeEventListener('click', clickFunc)
     }
   });
 
   function clickFunc(e) {
     //  doSomethings
-    setCount(count + 1)
+    console.log(e)
   }
 
   return (
-    <button>
-      click me! {count}
-    </button>
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>
+        Click me
+      </button>
+    </div>
   );
 }
 
