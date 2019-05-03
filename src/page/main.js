@@ -1,39 +1,39 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import { hot } from "react-hot-loader";
 
-function InheritanceInversionHOC(WrappedComponent) {
-  return class NewComponent extends WrappedComponent {
-    constructor() {
-      super()
-      this.state = {
-        'a': 'b'
-      }
-    }
+/* function Example() {
+  // Declare a new state variable, which we'll call "count"
+  const [count, setCount] = useState(0);
 
-    componentDidMount() {
-      console.log('componentDidMount: ', this)
-    }
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>
+        Click me
+      </button>
+    </div>
+  );
+} */
 
-    render() {
-      const wrapperTree = super.render()
-      const newProps = {
-        name: 'NewComponent'
-      }
-      const newTree = React.cloneElement(wrapperTree, newProps, wrapperTree.props.children)
-      console.log('newTree: ', newTree)
-      return newTree
-    }
+class Example extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      count: 0
+    };
   }
-}
 
-// 被获取ref实例组件
-class Main extends Component {
   render() {
     return (
-      <div ref='child'>Main</div>
-    )
+      <div>
+        <p>You clicked {this.state.count} times</p>
+        <button onClick={() => this.setState({ count: this.state.count + 1 })}>
+          Click me
+        </button>
+      </div>
+    );
   }
 }
 
 
-export default hot(module)(InheritanceInversionHOC(Main));
+export default hot(module)(Example);
