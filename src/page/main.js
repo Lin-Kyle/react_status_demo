@@ -1,33 +1,31 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import { hot } from "react-hot-loader";
 
-function Example() {
-  const [count, setCount] = useState(0);
+const initialState = { count: 0 };
 
-  useEffect(() => {
-    console.log(`You clicked ${count} times`)
-  });
-
-  useEffect(() => {
-    document.addEventListener('click', clickFunc, false)
-    return () => {
-      document.removeEventListener('click', clickFunc)
-    }
-  });
-
-  function clickFunc(e) {
-    //  doSomethings
-    console.log(e)
+function reducer(state, action) {
+  switch (action.type) {
+    case 'increment':
+      return { count: state.count + 1 };
+    case 'decrement':
+      return { count: state.count - 1 };
+    default:
+      throw new Error();
   }
+}
 
+function Counter() {
+  const [state, dispatch] = useReducer(reducer, initialState);
   return (
     <div>
-      <p>You clicked {count} times</p>
-      <button onClick={() => setCount(count + 1)}>
-        Click me
-      </button>
+      Count: {state.count}
+      <button onClick={() => dispatch({ type: 'increment' })}>+</button>
+      <button onClick={() => dispatch({ type: 'decrement' })}>-</button>
     </div>
   );
 }
 
-export default hot(module)(Example);
+
+
+
+export default hot(module)(Counter);
