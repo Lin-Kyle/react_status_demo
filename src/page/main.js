@@ -1,51 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { hot } from "react-hot-loader";
 
-/* class Example extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  componentDidMount() {
-    document.addEventListener('click', this.clickFunc, false)
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('click', this.clickFunc)
-  }
-
-  clickFunc(e) {
-    //  doSomethings
-    console.log(e)
-  }
-
-  render() {
-    return (
-      <button>
-        click me!
-      </button>
-    );
-  }
-} */
-
 function Example() {
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
+    console.log('addEventListener')
     document.addEventListener('click', clickFunc, false)
     return () => {
+      console.log('removeEventListener')
       document.removeEventListener('click', clickFunc)
     }
   });
 
   function clickFunc(e) {
     //  doSomethings
-    console.log(e)
+    setCount(count + 1)
   }
 
   return (
     <button>
-      click me!
-      </button>
+      click me! {count}
+    </button>
   );
 }
 
