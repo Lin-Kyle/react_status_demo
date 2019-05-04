@@ -1,19 +1,27 @@
-import React, { useState, useEffect, useReducer, useRef } from "react";
+import React, { useState, useEffect, useReducer, useRef, useCallback } from "react";
 import { hot } from "react-hot-loader";
 
-function TextInputWithFocusButton() {
-  const inputEl = useRef(null);
-  const onButtonClick = () => {
-    // `current` 指向已挂载到 DOM 上的文本输入元素
-    inputEl.current.focus();
-  };
+function MeasureExample() {
+  const [rect, ref] = useClientRect();
   return (
     <div>
-      <input ref={inputEl} type="text" />
-      <button onClick={onButtonClick}>Focus the input</button>
+      <h1 ref={ref}>Hello, world</h1>
+      {rect !== null &&
+        <h2>The above header is {Math.round(rect.height)}px tall</h2>
+      }
     </div>
   );
 }
 
+function useClientRect() {
+  const [rect, setRect] = useState(null);
+  const ref = useCallback(node => {
+    if (node !== null) {
+      setRect(node.getBoundingClientRect());
+    }
+  }, []);
+  return [rect, ref];
+}
 
-export default hot(module)(TextInputWithFocusButton);
+
+export default hot(module)(MeasureExample);
